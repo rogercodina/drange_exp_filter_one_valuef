@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Views custom exposed filter main.
+ * http://drupal.stackexchange.com/questions/26376/where-can-i-learn-about-how-to-create-a-custom-exposed-filter-for-views-3-and-d7
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function drange_exp_filter_one_valuef_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'drange_exp_filter_one_valuef') . '/inc',
+  );
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function drange_exp_filter_one_valuef_views_data() {
+  $data = array();
+
+  // Full date.
+  
+  $data['views']['fulld_sapi'] = array(
+	'group' => t('Custom'),
+    'title' => t('Date range for standart and search api views (full date).'),
+    'help' => t('Filters by full date.'),
+    'filter' => array(
+      'path' => drupal_get_path('module', 'drange_exp_filter_one_valuef') . '/inc',
+      'handler' => 'drange_exp_filter_one_valuef_handler_filter_fulld_sapi',
+    )
+  );
+
+  return $data;
+}

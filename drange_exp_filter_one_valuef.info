@@ -1,0 +1,8 @@
+name = Date range exposed filter for one value date fields
+description = Date range exposed filter for standard and Search API views
+version = "7.x-1.0"
+core = "7.x"
+package = Views
+dependencies[] = views
+
+files[] = inc/drange_exp_filter_one_valuef_handler_filter_fulld_sapi.inc
