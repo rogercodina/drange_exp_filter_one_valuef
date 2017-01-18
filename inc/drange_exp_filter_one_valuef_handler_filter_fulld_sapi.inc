@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Views custom exposed filter months plugin.
+ * Views custom exposed filter date plugin.
  */
 
 class drange_exp_filter_one_valuef_handler_filter_fulld_sapi extends views_handler_filter {
@@ -55,4 +55,37 @@ class drange_exp_filter_one_valuef_handler_filter_fulld_sapi extends views_handl
    * Per aixo hem implementat el hook_views_query_alter a l'altre fitxer.
    */
   /*function query() {}*/
+
+  /**
+   * Define custom option.
+   */
+  function option_definition() {
+     $options = parent::option_definition();
+     $options['filter_field_name'] = array('default' => '');
+     return $options;
+   }
+
+  /**
+   * Define a custom option to allow user to set the field_name for the filter.
+   */
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+
+    $form['filter_field_name'] = array(
+     '#type' => 'textfield', 
+     '#title' => t('Date field to use for filtering (machine name)'),
+     '#default_value' => isset($this->options['filter_field_name']) ? $this->options['filter_field_name'] : '',
+     '#description' => t('Ex. field_SOMETHING'),
+     '#size' => 60,
+     '#maxlength' => 128,
+     '#required' => TRUE,
+    );
+  }
+  
+  /**
+   * Options save.
+   */
+  function options_submit(&$form, &$form_state) {
+    parent::options_submit($form, $form_state);
+  }
 }

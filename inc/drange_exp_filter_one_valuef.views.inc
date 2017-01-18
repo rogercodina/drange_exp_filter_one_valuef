@@ -11,6 +11,9 @@
  * Unica manera de modificar la query si el filtre estar exposat (vistes normals).
  */
 function drange_exp_filter_one_valuef_views_query_alter(&$view, &$query) {
+
+  $fname = drange_exp_filter_one_valuef_get_filter_field_name($view);
+
   if (!empty($view->exposed_raw_input['fulld_from']) || !empty($view->exposed_raw_input['fulld_to'])) {
 
     $case = array();
@@ -22,7 +25,7 @@ function drange_exp_filter_one_valuef_views_query_alter(&$view, &$query) {
       $ini = date('Ymd', $fulld_from);
 
       // Build query.
-      $case[] = "DATE_FORMAT(field_data_field_inici_fi.field_inici_fi_value, '%Y%m%d') >= :ini";
+      $case[] = "DATE_FORMAT(field_data_{$fname}.{$fname}_value, '%Y%m%d') >= :ini";
       $vars_query[':ini'] = $ini;
     }
     
@@ -32,13 +35,13 @@ function drange_exp_filter_one_valuef_views_query_alter(&$view, &$query) {
       $fin = date('Ymd', $fulld_to);
 
       // Build query.
-      $case[] = "DATE_FORMAT(field_data_field_inici_fi.field_inici_fi_value, '%Y%m%d') <= :fin";
+      $case[] = "DATE_FORMAT(field_data_{$fname}.{$fname}_value, '%Y%m%d') <= :fin";
       $vars_query[':fin'] = $fin;
     }
 
     $case = '(' . implode(' AND ', $case) . ')';
     $query->add_where_expression(1, $case, $vars_query);
-    $query->add_table('field_data_field_inici_fi');
+    $query->add_table("field_data_$fname");
       
     //dpm($query);
   }
@@ -50,13 +53,16 @@ function drange_exp_filter_one_valuef_views_query_alter(&$view, &$query) {
  * Unica manera de modificar la query si el filtre estar exposat (Search API).
  */
 function drange_exp_filter_one_valuef_search_api_views_query_alter(&$view, &$query) {
+
+  $fname = drange_exp_filter_one_valuef_get_filter_field_name($view);
+
   /*
    * IMPORTANT: Use field names that appear in admin/config/search/search_api/index/[INDEX_NAME]/fields
    * NOTE: Search API stores dates as timestamps
    */
   if (!empty($view->exposed_raw_input['fulld_from']) || !empty($view->exposed_raw_input['fulld_to'])) {
 
-    $query->addField('field_inici_fi');
+    $query->addField($fname);
     $main_filter = $query->createFilter('AND');
 
     if (!empty($view->exposed_raw_input['fulld_from'])) {
@@ -65,7 +71,7 @@ function drange_exp_filter_one_valuef_search_api_views_query_alter(&$view, &$que
 
       // Build query.
       $subfilter1 = $query->createFilter('AND');
-      $subfilter1->condition('field_inici_fi', $ini , '>=');
+      $subfilter1->condition($fname, $ini , '>=');
       $main_filter->filter($subfilter1);
     }
     
@@ -75,7 +81,7 @@ function drange_exp_filter_one_valuef_search_api_views_query_alter(&$view, &$que
 
       // Build query.
       $subfilter2 = $query->createFilter('AND');
-      $subfilter2->condition('field_inici_fi', $fin , '<=');
+      $subfilter2->condition($fname, $fin , '<=');
       $main_filter->filter($subfilter2);
     }
 
@@ -83,4 +89,25 @@ function drange_exp_filter_one_valuef_search_api_views_query_alter(&$view, &$que
 
     //dpm($query);
   }
+}
+
+/**
+ * Get filter_field_name option.
+ *
+ * param $view object;
+ *
+ * @return string Field name.
+ */
+function drange_exp_filter_one_valuef_get_filter_field_name($view) {
+  $field_name = 'field_date';
+  
+  foreach($view->display_handler->handlers['filter'] as $filter) {
+    if (is_object($filter) && is_a($filter, 'drange_exp_filter_one_valuef_handler_filter_fulld_sapi')) {
+      if (!empty($filter->options['filter_field_name'])) {
+        $field_name = $filter->options['filter_field_name'];
+      }
+    }
+  }
+  
+  return $field_name;
 }
