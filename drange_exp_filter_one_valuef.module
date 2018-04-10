@@ -23,11 +23,11 @@ function drange_exp_filter_one_valuef_views_data() {
   $data = array();
 
   // Full date.
-  
+
   $data['views']['fulld_sapi'] = array(
 	'group' => t('Custom'),
     'title' => t('Date range for standart and search api views (full date).'),
-    'help' => t('Filters by full date.'),
+    'help' => t('Filters by full date given a date field with one value.'),
     'filter' => array(
       'path' => drupal_get_path('module', 'drange_exp_filter_one_valuef') . '/inc',
       'handler' => 'drange_exp_filter_one_valuef_handler_filter_fulld_sapi',
