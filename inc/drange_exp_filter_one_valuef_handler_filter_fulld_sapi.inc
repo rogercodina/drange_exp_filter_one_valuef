@@ -22,7 +22,7 @@ class drange_exp_filter_one_valuef_handler_filter_fulld_sapi extends views_handl
   function value_form(&$form, &$form_state) {
     parent::value_form($form, $form_state);
 
-    $form['value']['fulld_from'] = array(
+    $form['value']['fulld_from_' . $this->options['id']] = array(
       '#type' => 'date_popup',
       '#date_format' => 'd/m/Y',
       '#default_value' => "now",
@@ -35,7 +35,7 @@ class drange_exp_filter_one_valuef_handler_filter_fulld_sapi extends views_handl
       ),
     );
 
-    $form['value']['fulld_to'] = array(
+    $form['value']['fulld_to_' . $this->options['id']] = array(
       '#type' => 'date_popup',
       '#date_format' => 'd/m/Y',
       '#default_value' => "now",
@@ -60,8 +60,10 @@ class drange_exp_filter_one_valuef_handler_filter_fulld_sapi extends views_handl
    * Define custom option.
    */
   function option_definition() {
+     $option_name = 'filter_field_name_' . $this->options['id'];
+
      $options = parent::option_definition();
-     $options['filter_field_name'] = array('default' => '');
+     $options[$option_name] = array('default' => '');
      return $options;
    }
 
@@ -70,18 +72,19 @@ class drange_exp_filter_one_valuef_handler_filter_fulld_sapi extends views_handl
    */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
+    $option_name = 'filter_field_name_' . $this->options['id'];
 
-    $form['filter_field_name'] = array(
-     '#type' => 'textfield', 
+    $form[$option_name] = array(
+     '#type' => 'textfield',
      '#title' => t('Date field to use for filtering (machine name)'),
-     '#default_value' => isset($this->options['filter_field_name']) ? $this->options['filter_field_name'] : '',
+     '#default_value' => isset($this->options[$option_name]) ? $this->options[$option_name] : '',
      '#description' => t('Ex. field_SOMETHING'),
      '#size' => 60,
      '#maxlength' => 128,
      '#required' => TRUE,
     );
   }
-  
+
   /**
    * Options save.
    */
